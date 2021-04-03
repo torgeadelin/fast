@@ -450,8 +450,8 @@ export class Slider extends FormAssociatedSlider implements SliderConfiguration 
 
         /**
          * The following logic intends to overcome the issue with math in JavaScript with regards to floating point numbers.
-         * This is needed as the `step` may be an integer but could also be a float. To accomplish this the step  is assumed to be a float
-         * and is converted to an integer by determining the number of decimal places it represent, multiplying it until it is an
+         * This is needed as the `step` may be an integer but could also be a float. To accomplish this the step is assumed to be a float
+         * and is converted to an integer by determining the number of decimal places it has, multiplying it until it is an
          * integer and then dividing it to get back to the correct number.
          */
         let constrainedValue: number = value - this.min;
