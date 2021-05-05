@@ -1,6 +1,5 @@
 import { attr, FASTElement, observable, Observable } from "@microsoft/fast-element";
-import { ArrowKeys, Direction, Orientation } from "@microsoft/fast-web-utilities";
-import { clamp } from "lodash-es";
+import { ArrowKeys, Direction, limit, Orientation } from "@microsoft/fast-web-utilities";
 import { isFocusable } from "tabbable";
 import { ARIAGlobalStatesAndProperties } from "../patterns/aria-global";
 import { StartEnd } from "../patterns/start-end";
@@ -35,7 +34,7 @@ export class Toolbar extends FASTElement {
 
     set activeIndex(value: number) {
         if (this.$fastController.isConnected) {
-            this._activeIndex = clamp(value, 0, this.lastFocusableElementIndex);
+            this._activeIndex = limit(0, this.focusableElements.length - 1, value);
             Observable.notify(this, "activeIndex");
         }
     }
@@ -54,15 +53,6 @@ export class Toolbar extends FASTElement {
      * @internal
      */
     private focusableElements: HTMLElement[];
-
-    /**
-     * Returns the index of the last focusable element.
-     *
-     * @internal
-     */
-    private get lastFocusableElementIndex(): number {
-        return this.focusableElements.length - 1;
-    }
 
     /**
      * The orientation of the toolbar.
@@ -91,10 +81,7 @@ export class Toolbar extends FASTElement {
      */
     protected slottedItemsChanged(prev: unknown, next: HTMLElement[]): void {
         if (this.$fastController.isConnected) {
-            this.focusableElements = this.slottedItems.reduce(
-                Toolbar.reduceFocusableItems,
-                []
-            );
+            this.focusableElements = next.reduce(Toolbar.reduceFocusableItems, []);
             this.setFocusableElements();
         }
     }
